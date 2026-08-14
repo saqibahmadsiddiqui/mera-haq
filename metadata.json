@@ -1,0 +1,7 @@
+{
+  "name": "Mera Haq — AI Legal Rights Assistant",
+  "description": "Explains Pakistani legal rights in plain Roman Urdu and English for everyday disputes (rent, salary, cybercrime, consumer fraud) and generates ready-to-send complaint letters and legal notices.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
+
