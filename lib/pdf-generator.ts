@@ -1,4 +1,4 @@
-import { jsPDF } from "jspdf";
+// dynamic import used inside function
 
 export interface PDFExportOptions {
   title?: string;
@@ -8,10 +8,12 @@ export interface PDFExportOptions {
   date?: string;
 }
 
-export function generateLegalNoticePDF(
+export async function generateLegalNoticePDF(
   letterText: string,
   options: PDFExportOptions = {}
-): void {
+): Promise<void> {
+  const { jsPDF } = await import("jspdf");
+  
   const doc = new jsPDF({
     orientation: "portrait",
     unit: "mm",
@@ -117,7 +119,7 @@ export function generateLegalNoticePDF(
 }
 
 function addFooter(
-  doc: jsPDF,
+  doc: any,
   pageWidth: number,
   pageHeight: number,
   marginLeft: number,

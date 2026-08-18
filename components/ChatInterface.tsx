@@ -24,7 +24,7 @@ import {
   Building,
 } from "lucide-react";
 import { PAKISTANI_LAW_CATEGORIES, LawCategory } from "@/lib/laws-db";
-import { NoticeInitialData } from "./ComplaintLetterModal";
+import type { NoticeInitialData } from "./ComplaintLetterModal";
 
 export interface ChatMessage {
   id: string;

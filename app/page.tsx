@@ -5,10 +5,8 @@ import { Navbar } from "@/components/Navbar";
 import { ChatInterface } from "@/components/ChatInterface";
 import { HelplinesModal } from "@/components/HelplinesModal";
 import { LawDirectoryModal } from "@/components/LawDirectoryModal";
-import {
-  ComplaintLetterModal,
-  NoticeInitialData,
-} from "@/components/ComplaintLetterModal";
+import { ComplaintLetterModal } from "@/components/ComplaintLetterModal";
+import type { NoticeInitialData } from "@/components/ComplaintLetterModal";
 import { Footer } from "@/components/Footer";
 import { LawCategory } from "@/lib/laws-db";
 import { BookOpen, PhoneCall, FileText, ArrowUpRight } from "lucide-react";

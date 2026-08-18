@@ -58,9 +58,7 @@ const ComplaintLetterModalContent: React.FC<ModalContentProps> = ({
   const [respondentAddress, setRespondentAddress] = useState<string>(
     "Property No. 54-B, Main Boulevard, Lahore"
   );
-  const [incidentDate, setIncidentDate] = useState<string>(
-    new Date().toLocaleDateString("en-GB")
-  );
+  const [incidentDate, setIncidentDate] = useState<string>("14/08/2026");
   const [disputedAmount, setDisputedAmount] = useState<string>(
     initialData?.disputedAmount || "PKR 65,000"
   );

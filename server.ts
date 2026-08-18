@@ -1,8 +1,8 @@
-const { createServer } = require('http');
-const { parse } = require('url');
-const next = require('next');
-const fs = require('fs');
-const path = require('path');
+import { createServer } from 'http';
+import { parse } from 'url';
+import next from 'next';
+import fs from 'fs';
+import path from 'path';
 
 const port = parseInt(process.env.PORT || '3000', 10);
 const hostname = '0.0.0.0';
@@ -22,7 +22,7 @@ app
   .then(() => {
     createServer(async (req, res) => {
       try {
-        const parsedUrl = parse(req.url, true);
+        const parsedUrl = parse(req.url!, true);
         await handle(req, res, parsedUrl);
       } catch (err) {
         console.error('Error occurred handling', req.url, err);

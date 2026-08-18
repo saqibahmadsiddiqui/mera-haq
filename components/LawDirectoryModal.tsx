@@ -2,7 +2,8 @@
 
 import React, { useState } from "react";
 import { X, BookOpen, ChevronRight, Scale, Shield, Clock, ExternalLink } from "lucide-react";
-import { PAKISTANI_LAW_CATEGORIES, LawCategory } from "@/lib/laws-db";
+import { PAKISTANI_LAW_CATEGORIES } from "@/lib/laws-db";
+import type { LawCategory } from "@/lib/laws-db";
 
 interface LawDirectoryModalProps {
   isOpen: boolean;
