@@ -5,6 +5,7 @@ import {
   findCategoryByQuery,
   classifyQuery,
   getOffTopicRefusalMessage,
+  getScopeIntroductionMessage,
   PAKISTANI_LAW_CATEGORIES,
 } from "@/lib/laws-db";
 
@@ -19,9 +20,38 @@ export async function POST(req: NextRequest) {
 
     const trimmedMsg = message.trim();
 
-    // Classify query intent and check for off-topic/unrelated topics (e.g. "whether of Lahore")
-    const { isOffTopic: preClassifiedOffTopic, matchedCategory: autoCategory, isGeneralLegal } =
-      classifyQuery(trimmedMsg);
+    // Classify query intent and check for off-topic, capabilities inquiry, or legal dispute
+    const {
+      isOffTopic: preClassifiedOffTopic,
+      matchedCategory: autoCategory,
+      isGeneralLegal,
+      isScopeQuery,
+    } = classifyQuery(trimmedMsg);
+
+    // Fast-path response for scope/capability inquiries ("What kind of issues can you solve?")
+    if (isScopeQuery && !categoryId) {
+      return NextResponse.json({
+        text: getScopeIntroductionMessage(),
+        category: "scope-overview",
+        categoryTitle: "Mera Haq Supported Legal Scope & Services",
+        categoryUrdu: "قانونی مسائل اور خدمات کا احاطہ",
+        lawsCited: [
+          "Punjab/Sindh Rented Premises Acts",
+          "Payment of Wages Act 1936",
+          "PECA 2016 (FIA Cybercrime)",
+          "Consumer Protection Acts",
+          "Contract Act 1872",
+        ],
+        authority: "Relevant Courts, Tribunals & Ombudsmen of Pakistan",
+        helpline: "FIA: 1991 | Consumer: 1334 | Traffic: 1915",
+        portalUrl: "https://complaint.fia.gov.pk",
+        canGenerateLetter: false,
+        isOffTopic: false,
+        sources: [],
+        standardNoticeDays: 14,
+        sampleNoticeTitle: "Formal Legal Notice / Complaint Letter",
+      });
+    }
 
     // If user explicitly sent a categoryId from a card chip, honor it
     const matchedCategory = categoryId
@@ -41,6 +71,7 @@ export async function POST(req: NextRequest) {
         portalUrl: "",
         canGenerateLetter: false,
         isOffTopic: true,
+        sources: [],
         standardNoticeDays: 0,
         sampleNoticeTitle: "",
       });
@@ -57,6 +88,12 @@ If the citizen's query is UNRELATED to law, legal rights, civil or criminal disp
 2. DO NOT fabricate or cite tenancy laws or criminal statutes for an unrelated topic.
 3. Start your entire reply with the tag "[OFF_TOPIC]" on the very first line.
 4. Politely explain in Roman Urdu and English that Mera Haq only covers Pakistani legal rights and disputes, and guide them on what legal issues they can ask about.
+
+IF THE CITIZEN ASKS ABOUT YOUR CAPABILITIES, WHAT ISSUES YOU CAN SOLVE, OR HOW YOU CAN HELP:
+1. Do NOT fabricate an active lawsuit roadmap or cite generic court procedures like Article 10-A.
+2. Provide a clear, empowering breakdown of the 8 legal dispute areas Mera Haq handles (Tenant & Rent disputes, Unpaid salary, Cybercrime/PECA blackmail, Consumer fraud/Daraz, Wrongful termination, Traffic challans, Freelancer payment breach, Banking/Easypaisa fraud).
+3. Explain that you provide plain-language verdicts, exact Pakistani laws, competent authorities/forums, evidence-gathering roadmaps, and ready-to-use formal legal notices.
+4. Invite the user to describe their situation in Roman Urdu or English.
 
 FOR LEGITIMATE LEGAL & RIGHTS QUERIES:
 1. Explain the citizen's legal rights clearly in a natural mix of Roman Urdu and English (the way Pakistanis text casually, e.g., "Aap ka poora legal haq hai...", "Under the Punjab Consumer Protection Act 2005...").

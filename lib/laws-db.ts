@@ -407,6 +407,94 @@ export interface QueryIntentResult {
   isOffTopic: boolean;
   matchedCategory?: LawCategory;
   isGeneralLegal: boolean;
+  isScopeQuery?: boolean;
+}
+
+export function isScopeOrCapabilitiesQuery(query: string): boolean {
+  const q = query.toLowerCase().trim();
+  const patterns = [
+    /what kind of/i,
+    /what (types|type|category|categories) of/i,
+    /what (issues|problems|disputes|cases) (can|do|will) you/i,
+    /give (me|us) a solution/i,
+    /provide (me|us)?\s*(a\s*)?solution/i,
+    /what can you (do|solve|help|provide)/i,
+    /what solutions? (can|do) you/i,
+    /how can you help/i,
+    /what is your (scope|purpose|role|feature)/i,
+    /what can i ask/i,
+    /what do you do/i,
+    /kin (masail|cheezon|kanoon|qanoon) m(e|ein) madad/i,
+    /aap k(ya|ia) kar sakte h(ain|n)/i,
+    /introduce yourself/i,
+    /what is mera haq/i,
+    /who are you/i,
+    /services? (you provide|available)/i,
+  ];
+  return patterns.some((p) => p.test(q));
+}
+
+export function getScopeIntroductionMessage(): string {
+  return `### ⚖️ Mera Haq (میرا حق) — Supported Legal Issues & Solutions
+
+**Mera Haq** is an AI Legal Rights & Notice Generator tailored for everyday Pakistani citizens (tenants, employees, consumers, freelancers, gig workers, and students).
+
+Whenever you face a dispute or violation of rights, Mera Haq provides:
+1. **Clear Legal Verdict & Rights Breakdown** in easy Roman Urdu + English.
+2. **Exact Pakistani Statute & Sections** (e.g. *Punjab Rented Premises Act 2009*, *Payment of Wages Act 1936*, *PECA 2016*).
+3. **Designated Forum / Court / Helpline** to approach (e.g. *Rent Tribunal*, *Labor Court*, *FIA Cybercrime*, *Consumer Court*).
+4. **Actionable 3-Step Evidence & Notice Roadmap**.
+5. **Ready-to-Use Formal Legal Notice Generator** to send to the opposing party.
+
+---
+
+### 🛡️ The 8 Core Legal Dispute Areas We Solve:
+
+1. **🏠 Tenant & Rent Disputes (کرایہ داری کے مسائل)**
+   * Landlord unlawfully withholding your security deposit.
+   * Arbitrary eviction threats without 30–60 days statutory notice.
+   * Landlord cutting off electricity, water, or gas connections.
+   * *Forum:* Special Judge Rent / Rent Tribunal.
+
+2. **💼 Unpaid Salary & Delayed Wages (تنخواہ اور ملازمین کے حقوق)**
+   * Employer withholding monthly salary or delaying final settlement upon resignation.
+   * Unlawful pay cuts or refusal to pay gratuity and provident fund.
+   * *Forum:* Authority Under Payment of Wages Act / Labor Court.
+
+3. **🛡️ Cybercrime & Online Harassment (آن لائن ہراسانی و بلیک میلنگ)**
+   * Blackmailing with private pictures/videos on WhatsApp or social media.
+   * Identity theft, fake profile creation, online stalking, or threats.
+   * *Forum:* FIA Cyber Crime Wing (Helpline: 1991 | complaint.fia.gov.pk).
+
+4. **🛍️ Consumer Rights & Online Shopping Fraud (صارفین کے حقوق)**
+   * Daraz, Instagram, or local store delivering fake/defective goods and refusing refund.
+   * Refusal to honor 1-year product warranty.
+   * *Forum:* District Consumer Protection Court (Zero court fees).
+
+5. **👔 Wrongful Job Termination (نوکری سے بلا جواز برطرفی)**
+   * Sudden termination without 1-month written notice or 1-month gross pay in lieu.
+   * Firing without formal inquiry or stated legal grounds.
+   * *Forum:* Provincial Labor Court (Section 25-A Grievance Notice).
+
+6. **🚦 Erroneous Traffic Challans (غلط ٹریفک چالان)**
+   * Wrong Safe City e-challan or incorrect traffic warden ticket.
+   * Confiscation of driving license/CNIC without a lawful seizure memo.
+   * *Forum:* SP Traffic Grievance Cell / Judicial Magistrate.
+
+7. **💻 Freelancer & Small Contract Breaches (فری لانسنگ معاوضہ)**
+   * Client taking software/design delivery and refusing payment or ghosting on WhatsApp.
+   * Enforcing digital agreements and WhatsApp chat contracts under Contract Act 1872.
+   * *Forum:* Small Claims & Minor Offences Court.
+
+8. **💳 Bank & Digital Wallet Fraud (بینک اور ایزی پیسہ / جاز کیش فراڈ)**
+   * Unauthorized Easypaisa/JazzCash debits or ATM cash dispensing failure.
+   * Bank failing to resolve chargeback complaints within 45 days.
+   * *Forum:* Banking Mohtasib Pakistan (Banking Ombudsman).
+
+---
+
+💡 **How to begin:**
+Simply describe your situation in Roman Urdu or English below (e.g., *"Makaan malik deposit wapis nahi de raha"* or *"Company hasn't paid my 2 months salary"*), or click any suggestion chip below to get an instant legal verdict and formal legal notice!`;
 }
 
 export function classifyQuery(query: string): QueryIntentResult {
@@ -418,34 +506,47 @@ export function classifyQuery(query: string): QueryIntentResult {
       isOffTopic: true,
       matchedCategory: undefined,
       isGeneralLegal: false,
+      isScopeQuery: false,
     };
   }
 
-  // 2. Specific law category match
+  // 2. Check if the user is asking about capabilities/scope of the app
+  if (isScopeOrCapabilitiesQuery(q)) {
+    return {
+      isOffTopic: false,
+      matchedCategory: undefined,
+      isGeneralLegal: true,
+      isScopeQuery: true,
+    };
+  }
+
+  // 3. Specific law category match
   const matched = findCategoryByQuery(q);
   if (matched) {
     return {
       isOffTopic: false,
       matchedCategory: matched,
       isGeneralLegal: false,
+      isScopeQuery: false,
     };
   }
 
-  // 3. Has general legal context
+  // 4. Has general legal context
   if (hasPakistaniLegalContext(q)) {
     return {
       isOffTopic: false,
       matchedCategory: undefined,
       isGeneralLegal: true,
+      isScopeQuery: false,
     };
   }
 
-  // 4. If query doesn't match legal keywords and has 0 category match:
-  // Check if it's very short or generic query without legal intent (e.g. "Lahore", "today", "help me with phone")
+  // 5. If query doesn't match legal keywords and has 0 category match:
   return {
     isOffTopic: true,
     matchedCategory: undefined,
     isGeneralLegal: false,
+    isScopeQuery: false,
   };
 }
 
