@@ -74,25 +74,25 @@ export const HelplinesModal: React.FC<HelplinesModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 p-4 backdrop-blur-sm animate-fade-in">
-      <div className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-2xl bg-[#fdfdfb] p-6 shadow-2xl ring-1 ring-slate-200 font-sans">
+      <div className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-2xl bg-[#fdfdfb] dark:bg-slate-900 p-6 shadow-2xl ring-1 ring-slate-200 dark:ring-slate-800 font-sans text-slate-900 dark:text-slate-100">
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-slate-200/90 pb-4">
+        <div className="flex items-center justify-between border-b border-slate-200/90 dark:border-slate-800 pb-4">
           <div className="flex items-center gap-2.5">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-teal-950 text-teal-300 shadow-sm">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-teal-950 dark:bg-teal-700 text-teal-300 dark:text-teal-100 shadow-sm">
               <Phone className="h-4 w-4" />
             </div>
             <div>
-              <h3 className="text-lg font-serif font-bold text-teal-950">
+              <h3 className="text-lg font-serif font-bold text-teal-950 dark:text-teal-100">
                 Official Pakistani Legal &amp; Complaint Helplines
               </h3>
-              <p className="text-xs text-slate-500 font-medium">
+              <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">
                 Direct government portals, emergency numbers &amp; dispute bodies
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="rounded-full p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-700 transition"
+            className="rounded-full p-1.5 text-slate-400 hover:bg-slate-100 hover:dark:bg-slate-800 hover:text-slate-700 hover:dark:text-slate-200 transition"
           >
             <X className="h-5 w-5" />
           </button>
@@ -103,50 +103,50 @@ export const HelplinesModal: React.FC<HelplinesModalProps> = ({
           {helplines.map((item, idx) => (
             <div
               key={idx}
-              className="rounded-xl border border-slate-200/90 bg-[#fcfcf9] p-3.5 transition hover:border-teal-300 hover:bg-white shadow-2xs"
+              className="rounded-xl border border-slate-200/90 dark:border-slate-800 bg-[#fcfcf9] dark:bg-slate-950 p-3.5 transition hover:border-teal-300 hover:dark:border-teal-500 hover:bg-white hover:dark:bg-slate-900 shadow-2xs"
             >
               <div className="flex flex-wrap items-start justify-between gap-2">
                 <div>
                   <div className="flex items-center gap-2">
-                    <h4 className="font-serif font-bold text-slate-900 text-sm sm:text-base">
+                    <h4 className="font-serif font-bold text-slate-900 dark:text-white text-sm sm:text-base">
                       {item.name}
                     </h4>
                     <span className={`rounded-full border px-2 py-0.5 text-[10px] font-bold ${item.color}`}>
                       {item.badge}
                     </span>
                   </div>
-                  <p className="text-xs font-serif italic text-teal-800 mt-0.5">
+                  <p className="text-xs font-serif italic text-teal-800 dark:text-teal-400 mt-0.5">
                     {item.urdu}
                   </p>
                 </div>
                 <div className="flex items-center gap-2">
                   <a
                     href={`tel:${item.phone.split(" ")[0]}`}
-                    className="flex items-center gap-1.5 rounded-full bg-teal-950 px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-white shadow-2xs hover:bg-black transition"
+                    className="flex items-center gap-1.5 rounded-full bg-teal-950 dark:bg-teal-700 px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-white shadow-2xs hover:bg-black hover:dark:bg-teal-600 transition"
                   >
-                    <Phone className="h-3 w-3 text-teal-300" />
+                    <Phone className="h-3 w-3 text-teal-300 dark:text-teal-100" />
                     <span>{item.phone}</span>
                   </a>
                 </div>
               </div>
 
-              <p className="mt-2 text-xs text-slate-600 leading-relaxed font-sans">
+              <p className="mt-2 text-xs text-slate-600 dark:text-slate-300 leading-relaxed font-sans">
                 {item.description}
               </p>
 
               {item.portal && (
-                <div className="mt-2.5 flex items-center gap-2 pt-2 border-t border-slate-200/60">
-                  <Globe className="h-3.5 w-3.5 text-teal-700" />
+                <div className="mt-2.5 flex items-center gap-2 pt-2 border-t border-slate-200/60 dark:border-slate-800">
+                  <Globe className="h-3.5 w-3.5 text-teal-700 dark:text-teal-400" />
                   <a
                     href={item.portal}
                     target="_blank"
                     rel="noreferrer"
-                    className="text-xs font-medium text-teal-800 hover:underline"
+                    className="text-xs font-medium text-teal-800 dark:text-teal-400 hover:underline"
                   >
                     Official Portal: {item.portal.replace("https://", "")}
                   </a>
                   {item.whatsapp && (
-                    <span className="ml-auto text-xs text-slate-500 font-medium">
+                    <span className="ml-auto text-xs text-slate-500 dark:text-slate-400 font-medium">
                       WhatsApp: {item.whatsapp}
                     </span>
                   )}
@@ -157,12 +157,12 @@ export const HelplinesModal: React.FC<HelplinesModalProps> = ({
         </div>
 
         {/* Footer Note */}
-        <div className="mt-4 rounded-xl bg-amber-50/80 p-3.5 text-xs text-amber-950 border border-amber-200">
+        <div className="mt-4 rounded-xl bg-amber-50/80 dark:bg-amber-950/40 p-3.5 text-xs text-amber-950 dark:text-amber-300 border border-amber-200 dark:border-amber-800/80">
           <p className="flex items-center gap-1.5 font-bold">
-            <AlertCircle className="h-4 w-4 text-amber-700 shrink-0" />
+            <AlertCircle className="h-4 w-4 text-amber-700 dark:text-amber-400 shrink-0" />
             Advice when calling:
           </p>
-          <p className="mt-1 text-amber-900 leading-relaxed font-sans">
+          <p className="mt-1 text-amber-900 dark:text-amber-200 leading-relaxed font-sans">
             Always ask for and note down your <strong>Diary / Complaint Reference Number</strong> and the name/designation of the officer attending your call.
           </p>
         </div>

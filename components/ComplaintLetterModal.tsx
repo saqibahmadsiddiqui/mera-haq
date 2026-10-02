@@ -160,25 +160,25 @@ const ComplaintLetterModalContent: React.FC<ModalContentProps> = ({
   };
 
   return (
-    <div className="relative flex flex-col w-full max-w-5xl max-h-[92vh] rounded-2xl bg-[#fdfdfb] shadow-2xl ring-1 ring-slate-200 overflow-hidden font-sans">
+    <div className="relative flex flex-col w-full max-w-5xl max-h-[92vh] rounded-2xl bg-[#fdfdfb] dark:bg-slate-900 shadow-2xl ring-1 ring-slate-200 dark:ring-slate-800 overflow-hidden font-sans text-slate-900 dark:text-slate-100">
       {/* Header */}
-      <div className="flex items-center justify-between border-b border-slate-200/90 bg-[#fcfcf9] px-5 py-4">
+      <div className="flex items-center justify-between border-b border-slate-200/90 dark:border-slate-800 bg-[#fcfcf9] dark:bg-slate-900 px-5 py-4">
         <div className="flex items-center gap-2.5">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-teal-950 text-teal-300 shadow-sm">
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-teal-950 dark:bg-teal-700 text-teal-300 dark:text-teal-100 shadow-sm">
             <FileText className="h-4 w-4" />
           </div>
           <div>
-            <h3 className="text-base sm:text-lg font-serif font-bold text-teal-950">
+            <h3 className="text-base sm:text-lg font-serif font-bold text-teal-950 dark:text-teal-100">
               Pakistani Legal Notice &amp; Complaint Drafter
             </h3>
-            <p className="text-xs text-slate-500 font-medium">
+            <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">
               Statutory compliant draft formatted for Pakistan courts &amp; tribunals
             </p>
           </div>
         </div>
         <button
           onClick={onClose}
-          className="rounded-full p-1.5 text-slate-400 hover:bg-slate-200 hover:text-slate-700 transition"
+          className="rounded-full p-1.5 text-slate-400 hover:bg-slate-200 hover:dark:bg-slate-800 hover:text-slate-700 hover:dark:text-slate-200 transition"
         >
           <X className="h-5 w-5" />
         </button>
@@ -187,9 +187,9 @@ const ComplaintLetterModalContent: React.FC<ModalContentProps> = ({
       {/* Modal Body: Split View */}
       <div className="grid grid-cols-1 lg:grid-cols-12 flex-1 overflow-hidden">
         {/* Left Column: Case Facts & Party Inputs */}
-        <div className="lg:col-span-5 border-r border-slate-200 p-4 sm:p-5 overflow-y-auto max-h-[45vh] lg:max-h-[75vh] space-y-4 bg-[#fcfcf9]/70">
+        <div className="lg:col-span-5 border-r border-slate-200 dark:border-slate-800 p-4 sm:p-5 overflow-y-auto max-h-[45vh] lg:max-h-[75vh] space-y-4 bg-[#fcfcf9]/70 dark:bg-slate-950/70">
           <div>
-            <label className="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1">
+            <label className="block text-[11px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1">
               Dispute Category
             </label>
             <select
@@ -203,7 +203,7 @@ const ComplaintLetterModalContent: React.FC<ModalContentProps> = ({
                   setDemandType(cat.sampleNoticeTitle);
                 }
               }}
-              className="w-full rounded-xl border border-slate-300/90 bg-white px-3 py-2 text-xs font-medium text-slate-800 focus:border-teal-700 focus:outline-none focus:ring-1 focus:ring-teal-700"
+              className="w-full rounded-xl border border-slate-300/90 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-xs font-medium text-slate-800 dark:text-slate-200 focus:border-teal-700 focus:outline-none focus:ring-1 focus:ring-teal-700"
             >
               {PAKISTANI_LAW_CATEGORIES.map((cat) => (
                 <option key={cat.id} value={cat.id}>
@@ -214,181 +214,181 @@ const ComplaintLetterModalContent: React.FC<ModalContentProps> = ({
           </div>
 
           {/* Applicable Forum Info Card */}
-          <div className="rounded-xl border border-teal-200 bg-teal-50/70 p-3 text-xs text-teal-950">
+          <div className="rounded-xl border border-teal-200 dark:border-teal-800/80 bg-teal-50/70 dark:bg-teal-950/40 p-3 text-xs text-teal-950 dark:text-teal-200">
             <span className="font-bold">Target Forum: </span>
             {currentCategory.authority}
-            <div className="text-[11px] text-teal-800 font-medium mt-0.5">
+            <div className="text-[11px] text-teal-800 dark:text-teal-400 font-medium mt-0.5">
               Applicable: {currentCategory.laws[0]}
             </div>
           </div>
 
           {/* Complainant (Sender) Section */}
-          <div className="space-y-2 pt-2 border-t border-slate-200">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-600">
+          <div className="space-y-2 pt-2 border-t border-slate-200 dark:border-slate-800">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400">
               1. Your Details (Complainant / Sender)
             </span>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               <div>
-                <label className="text-[11px] text-slate-600 font-medium">
+                <label className="text-[11px] text-slate-600 dark:text-slate-300 font-medium">
                   Your Full Name
                 </label>
                 <input
                   type="text"
                   value={complainantName}
                   onChange={(e) => setComplainantName(e.target.value)}
-                  className="w-full rounded-lg border border-slate-300/90 bg-white px-2.5 py-1.5 text-xs focus:border-teal-700 focus:outline-none"
+                  className="w-full rounded-lg border border-slate-300/90 dark:border-slate-700 bg-white dark:bg-slate-900 px-2.5 py-1.5 text-xs text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:border-teal-700 focus:outline-none"
                   placeholder="e.g. Ahmed Khan"
                 />
               </div>
               <div>
-                <label className="text-[11px] text-slate-600 font-medium">
+                <label className="text-[11px] text-slate-600 dark:text-slate-300 font-medium">
                   CNIC (Optional)
                 </label>
                 <input
                   type="text"
                   value={complainantCnic}
                   onChange={(e) => setComplainantCnic(e.target.value)}
-                  className="w-full rounded-lg border border-slate-300/90 bg-white px-2.5 py-1.5 text-xs focus:border-teal-700 focus:outline-none"
+                  className="w-full rounded-lg border border-slate-300/90 dark:border-slate-700 bg-white dark:bg-slate-900 px-2.5 py-1.5 text-xs text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:border-teal-700 focus:outline-none"
                   placeholder="35202-XXXXXXX-X"
                 />
               </div>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               <div>
-                <label className="text-[11px] text-slate-600 font-medium">
+                <label className="text-[11px] text-slate-600 dark:text-slate-300 font-medium">
                   Phone / WhatsApp
                 </label>
                 <input
                   type="text"
                   value={complainantPhone}
                   onChange={(e) => setComplainantPhone(e.target.value)}
-                  className="w-full rounded-lg border border-slate-300/90 bg-white px-2.5 py-1.5 text-xs focus:border-teal-700 focus:outline-none"
+                  className="w-full rounded-lg border border-slate-300/90 dark:border-slate-700 bg-white dark:bg-slate-900 px-2.5 py-1.5 text-xs text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:border-teal-700 focus:outline-none"
                   placeholder="0300-1234567"
                 />
               </div>
               <div>
-                <label className="text-[11px] text-slate-600 font-medium">
+                <label className="text-[11px] text-slate-600 dark:text-slate-300 font-medium">
                   City &amp; Province
                 </label>
                 <input
                   type="text"
                   value={complainantCity}
                   onChange={(e) => setComplainantCity(e.target.value)}
-                  className="w-full rounded-lg border border-slate-300/90 bg-white px-2.5 py-1.5 text-xs focus:border-teal-700 focus:outline-none"
+                  className="w-full rounded-lg border border-slate-300/90 dark:border-slate-700 bg-white dark:bg-slate-900 px-2.5 py-1.5 text-xs text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:border-teal-700 focus:outline-none"
                   placeholder="Lahore, Punjab"
                 />
               </div>
             </div>
             <div>
-              <label className="text-[11px] text-slate-600 font-medium">
+              <label className="text-[11px] text-slate-600 dark:text-slate-300 font-medium">
                 Your Address
               </label>
               <input
                 type="text"
                 value={complainantAddress}
                 onChange={(e) => setComplainantAddress(e.target.value)}
-                className="w-full rounded-lg border border-slate-300/90 bg-white px-2.5 py-1.5 text-xs focus:border-teal-700 focus:outline-none"
+                className="w-full rounded-lg border border-slate-300/90 dark:border-slate-700 bg-white dark:bg-slate-900 px-2.5 py-1.5 text-xs text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:border-teal-700 focus:outline-none"
                 placeholder="Street/Area address"
               />
             </div>
           </div>
 
           {/* Respondent Section */}
-          <div className="space-y-2 pt-2 border-t border-slate-200">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-600">
+          <div className="space-y-2 pt-2 border-t border-slate-200 dark:border-slate-800">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400">
               2. Opposing Party (Respondent / Recipient)
             </span>
             <div>
-              <label className="text-[11px] text-slate-600 font-medium">
+              <label className="text-[11px] text-slate-600 dark:text-slate-300 font-medium">
                 Name / Company / Landlord
               </label>
               <input
                 type="text"
                 value={respondentName}
                 onChange={(e) => setRespondentName(e.target.value)}
-                className="w-full rounded-lg border border-slate-300/90 bg-white px-2.5 py-1.5 text-xs focus:border-teal-700 focus:outline-none"
+                className="w-full rounded-lg border border-slate-300/90 dark:border-slate-700 bg-white dark:bg-slate-900 px-2.5 py-1.5 text-xs text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:border-teal-700 focus:outline-none"
                 placeholder="e.g. Tariq Mehmood (Landlord) / ABC Co."
               />
             </div>
             <div>
-              <label className="text-[11px] text-slate-600 font-medium">
+              <label className="text-[11px] text-slate-600 dark:text-slate-300 font-medium">
                 Recipient Address / Location
               </label>
               <input
                 type="text"
                 value={respondentAddress}
                 onChange={(e) => setRespondentAddress(e.target.value)}
-                className="w-full rounded-lg border border-slate-300/90 bg-white px-2.5 py-1.5 text-xs focus:border-teal-700 focus:outline-none"
+                className="w-full rounded-lg border border-slate-300/90 dark:border-slate-700 bg-white dark:bg-slate-900 px-2.5 py-1.5 text-xs text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:border-teal-700 focus:outline-none"
                 placeholder="Address of property or office"
               />
             </div>
           </div>
 
           {/* Facts & Claim Section */}
-          <div className="space-y-2 pt-2 border-t border-slate-200">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-600">
+          <div className="space-y-2 pt-2 border-t border-slate-200 dark:border-slate-800">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400">
               3. Dispute Facts &amp; Demands
             </span>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               <div>
-                <label className="text-[11px] text-slate-600 font-medium">
+                <label className="text-[11px] text-slate-600 dark:text-slate-300 font-medium">
                   Incident Date
                 </label>
                 <input
                   type="text"
                   value={incidentDate}
                   onChange={(e) => setIncidentDate(e.target.value)}
-                  className="w-full rounded-lg border border-slate-300/90 bg-white px-2.5 py-1.5 text-xs focus:border-teal-700 focus:outline-none"
+                  className="w-full rounded-lg border border-slate-300/90 dark:border-slate-700 bg-white dark:bg-slate-900 px-2.5 py-1.5 text-xs text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:border-teal-700 focus:outline-none"
                 />
               </div>
               <div>
-                <label className="text-[11px] text-slate-600 font-medium">
+                <label className="text-[11px] text-slate-600 dark:text-slate-300 font-medium">
                   Disputed Amount (PKR)
                 </label>
                 <input
                   type="text"
                   value={disputedAmount}
                   onChange={(e) => setDisputedAmount(e.target.value)}
-                  className="w-full rounded-lg border border-slate-300/90 bg-white px-2.5 py-1.5 text-xs focus:border-teal-700 focus:outline-none"
+                  className="w-full rounded-lg border border-slate-300/90 dark:border-slate-700 bg-white dark:bg-slate-900 px-2.5 py-1.5 text-xs text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:border-teal-700 focus:outline-none"
                   placeholder="e.g. PKR 75,000"
                 />
               </div>
             </div>
 
             <div>
-              <label className="text-[11px] text-slate-600 font-medium">
+              <label className="text-[11px] text-slate-600 dark:text-slate-300 font-medium">
                 Summary of Facts (What happened?)
               </label>
               <textarea
                 rows={3}
                 value={facts}
                 onChange={(e) => setFacts(e.target.value)}
-                className="w-full rounded-lg border border-slate-300/90 bg-white px-2.5 py-1.5 text-xs focus:border-teal-700 focus:outline-none font-sans"
+                className="w-full rounded-lg border border-slate-300/90 dark:border-slate-700 bg-white dark:bg-slate-900 px-2.5 py-1.5 text-xs text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:border-teal-700 focus:outline-none font-sans"
                 placeholder="State the agreement date, what was promised, what failed, and any dates..."
               />
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               <div>
-                <label className="text-[11px] text-slate-600 font-medium">
+                <label className="text-[11px] text-slate-600 dark:text-slate-300 font-medium">
                   Specific Legal Demand
                 </label>
                 <input
                   type="text"
                   value={demandType}
                   onChange={(e) => setDemandType(e.target.value)}
-                  className="w-full rounded-lg border border-slate-300/90 bg-white px-2.5 py-1.5 text-xs focus:border-teal-700 focus:outline-none"
+                  className="w-full rounded-lg border border-slate-300/90 dark:border-slate-700 bg-white dark:bg-slate-900 px-2.5 py-1.5 text-xs text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:border-teal-700 focus:outline-none"
                   placeholder="e.g. Immediate release of security deposit"
                 />
               </div>
               <div>
-                <label className="text-[11px] text-slate-600 font-medium">
+                <label className="text-[11px] text-slate-600 dark:text-slate-300 font-medium">
                   Notice Period
                 </label>
                 <select
                   value={noticeDays}
                   onChange={(e) => setNoticeDays(Number(e.target.value))}
-                  className="w-full rounded-lg border border-slate-300/90 bg-white px-2.5 py-1.5 text-xs focus:border-teal-700 focus:outline-none"
+                  className="w-full rounded-lg border border-slate-300/90 dark:border-slate-700 bg-white dark:bg-slate-900 px-2.5 py-1.5 text-xs text-slate-900 dark:text-white focus:border-teal-700 focus:outline-none"
                 >
                   <option value={7}>7 Calendar Days (Urgent)</option>
                   <option value={14}>14 Calendar Days (Standard)</option>
@@ -424,16 +424,16 @@ const ComplaintLetterModalContent: React.FC<ModalContentProps> = ({
         </div>
 
         {/* Right Column: Notice Document Preview / Editor */}
-        <div className="lg:col-span-7 flex flex-col bg-white p-4 sm:p-5 overflow-hidden">
+        <div className="lg:col-span-7 flex flex-col bg-white dark:bg-slate-900 p-4 sm:p-5 overflow-hidden">
           {/* Top Toolbar */}
-          <div className="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-slate-200">
-            <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-full">
+          <div className="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-slate-200 dark:border-slate-800">
+            <div className="flex items-center gap-1 bg-slate-100 dark:bg-slate-800 p-1 rounded-full">
               <button
                 onClick={() => setActiveTab("preview")}
                 className={`px-3.5 py-1 text-xs font-semibold rounded-full transition ${
                   activeTab === "preview"
-                    ? "bg-white text-teal-950 shadow-2xs"
-                    : "text-slate-600 hover:text-slate-900"
+                    ? "bg-white dark:bg-slate-950 text-teal-950 dark:text-teal-300 shadow-2xs"
+                    : "text-slate-600 dark:text-slate-400 hover:text-slate-900 hover:dark:text-white"
                 }`}
               >
                 Document View
@@ -442,8 +442,8 @@ const ComplaintLetterModalContent: React.FC<ModalContentProps> = ({
                 onClick={() => setActiveTab("edit")}
                 className={`px-3.5 py-1 text-xs font-semibold rounded-full transition ${
                   activeTab === "edit"
-                    ? "bg-white text-teal-950 shadow-2xs"
-                    : "text-slate-600 hover:text-slate-900"
+                    ? "bg-white dark:bg-slate-950 text-teal-950 dark:text-teal-300 shadow-2xs"
+                    : "text-slate-600 dark:text-slate-400 hover:text-slate-900 hover:dark:text-white"
                 }`}
               >
                 <span className="flex items-center gap-1">
@@ -457,17 +457,17 @@ const ComplaintLetterModalContent: React.FC<ModalContentProps> = ({
               <div className="flex items-center gap-1.5">
                 <button
                   onClick={handleCopy}
-                  className="flex items-center gap-1 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 shadow-2xs hover:bg-slate-50 transition"
+                  className="flex items-center gap-1 rounded-full border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-1.5 text-xs font-semibold text-slate-700 dark:text-slate-200 shadow-2xs hover:bg-slate-50 hover:dark:bg-slate-700 transition"
                   title="Copy Notice Text"
                 >
                   {isCopied ? (
                     <>
-                      <Check className="h-3.5 w-3.5 text-emerald-600" />
-                      <span className="text-emerald-700 font-semibold">Copied!</span>
+                      <Check className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
+                      <span className="text-emerald-700 dark:text-emerald-300 font-semibold">Copied!</span>
                     </>
                   ) : (
                     <>
-                      <Copy className="h-3.5 w-3.5 text-slate-500" />
+                      <Copy className="h-3.5 w-3.5 text-slate-500 dark:text-slate-400" />
                       <span>Copy</span>
                     </>
                   )}
@@ -475,18 +475,18 @@ const ComplaintLetterModalContent: React.FC<ModalContentProps> = ({
 
                 <button
                   onClick={handlePrint}
-                  className="flex items-center gap-1 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 shadow-2xs hover:bg-slate-50 transition"
+                  className="flex items-center gap-1 rounded-full border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-1.5 text-xs font-semibold text-slate-700 dark:text-slate-200 shadow-2xs hover:bg-slate-50 hover:dark:bg-slate-700 transition"
                   title="Print Notice"
                 >
-                  <Printer className="h-3.5 w-3.5 text-slate-500" />
+                  <Printer className="h-3.5 w-3.5 text-slate-500 dark:text-slate-400" />
                   <span className="hidden sm:inline">Print</span>
                 </button>
 
                 <button
                   onClick={handleDownloadPDF}
-                  className="flex items-center gap-1.5 rounded-full bg-teal-950 px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-white shadow-sm hover:bg-black transition"
+                  className="flex items-center gap-1.5 rounded-full bg-teal-950 dark:bg-teal-700 px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-white shadow-sm hover:bg-black hover:dark:bg-teal-600 transition"
                 >
-                  <Download className="h-3.5 w-3.5 text-teal-300" />
+                  <Download className="h-3.5 w-3.5 text-teal-300 dark:text-teal-200" />
                   <span>Download PDF</span>
                 </button>
               </div>
@@ -494,22 +494,22 @@ const ComplaintLetterModalContent: React.FC<ModalContentProps> = ({
           </div>
 
           {/* Document Body Area */}
-          <div className="flex-1 overflow-y-auto mt-3 p-3 sm:p-4 rounded-xl border border-slate-200/90 bg-[#fcfcf9]">
+          <div className="flex-1 overflow-y-auto mt-3 p-3 sm:p-4 rounded-xl border border-slate-200/90 dark:border-slate-800 bg-[#fcfcf9] dark:bg-slate-950">
             {isGenerating ? (
               <div className="h-full flex flex-col items-center justify-center py-12 text-center space-y-3">
-                <RefreshCw className="h-8 w-8 text-teal-700 animate-spin" />
+                <RefreshCw className="h-8 w-8 text-teal-700 dark:text-teal-400 animate-spin" />
                 <div>
-                  <h4 className="font-serif font-bold text-slate-900 text-sm">
+                  <h4 className="font-serif font-bold text-slate-900 dark:text-white text-sm">
                     Structuring Legal Notice &amp; Statutory Grounds...
                   </h4>
-                  <p className="text-xs text-slate-500 mt-1 max-w-sm">
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 max-w-sm">
                     Applying Pakistani statutes, section citations, standard formal notice terminology, and statutory remedy clauses.
                   </p>
                 </div>
               </div>
             ) : generatedLetter ? (
               activeTab === "preview" ? (
-                <div className="bg-white p-6 sm:p-8 rounded-xl shadow-xs border border-slate-200/80 font-serif text-xs sm:text-sm text-slate-900 whitespace-pre-wrap leading-relaxed">
+                <div className="bg-white dark:bg-slate-900 p-6 sm:p-8 rounded-xl shadow-xs border border-slate-200/80 dark:border-slate-800 font-serif text-xs sm:text-sm text-slate-900 dark:text-slate-100 whitespace-pre-wrap leading-relaxed">
                   {generatedLetter}
                 </div>
               ) : (
@@ -517,25 +517,25 @@ const ComplaintLetterModalContent: React.FC<ModalContentProps> = ({
                   rows={18}
                   value={generatedLetter}
                   onChange={(e) => setGeneratedLetter(e.target.value)}
-                  className="w-full h-full font-mono text-xs p-3 rounded-lg border border-slate-300 bg-white text-slate-900 focus:outline-none focus:ring-1 focus:ring-teal-700"
+                  className="w-full h-full font-mono text-xs p-3 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-teal-700"
                 />
               )
             ) : (
               <div className="h-full flex flex-col items-center justify-center py-12 text-center space-y-3">
-                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-teal-50 text-teal-800 border border-teal-100">
+                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-teal-50 dark:bg-teal-950/70 text-teal-800 dark:text-teal-300 border border-teal-100 dark:border-teal-800">
                   <FileText className="h-6 w-6" />
                 </div>
                 <div>
-                  <h4 className="font-serif font-bold text-slate-900 text-base">
+                  <h4 className="font-serif font-bold text-slate-900 dark:text-white text-base">
                     No Notice Generated Yet
                   </h4>
-                  <p className="text-xs text-slate-500 mt-1 max-w-sm">
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 max-w-sm">
                     Fill in the dispute facts on the left and click <strong>&quot;Generate Official Legal Notice&quot;</strong> to create a ready-to-dispatch Pakistani legal complaint in seconds.
                   </p>
                 </div>
                 <button
                   onClick={handleGenerateNotice}
-                  className="mt-2 rounded-full bg-teal-950 px-5 py-2 text-xs font-bold uppercase tracking-wider text-white shadow-sm hover:bg-black transition"
+                  className="mt-2 rounded-full bg-teal-950 dark:bg-teal-700 px-5 py-2 text-xs font-bold uppercase tracking-wider text-white shadow-sm hover:bg-black hover:dark:bg-teal-600 transition"
                 >
                   Draft Now
                 </button>
@@ -545,7 +545,7 @@ const ComplaintLetterModalContent: React.FC<ModalContentProps> = ({
 
           {/* Practical Dispatch Instructions */}
           {generatedLetter && (
-            <div className="mt-3 rounded-xl border border-amber-200 bg-amber-50/80 p-3 text-[11px] text-amber-950">
+            <div className="mt-3 rounded-xl border border-amber-200 dark:border-amber-800/80 bg-amber-50/80 dark:bg-amber-950/40 p-3 text-[11px] text-amber-950 dark:text-amber-300">
               <span className="font-bold">📮 How to Serve This Notice in Pakistan: </span>
               Print 2 copies. Send one via <strong>Pakistan Post Registered A.D. / TCS / UMS</strong> to the opposing party&apos;s address. Keep the courier receipt and the second copy safely as court-admissible evidence.
             </div>
