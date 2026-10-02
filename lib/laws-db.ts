@@ -350,6 +350,126 @@ export function getKnowledgeBaseSummary(): string {
   }).join("\n\n");
 }
 
+/**
+ * Checks if a query is clearly off-topic and unrelated to Pakistani legal rights or citizen disputes.
+ * Handles common off-topic topics like weather, sports, cooking, coding, general trivia, entertainment, etc.
+ */
+export function isExplicitlyOffTopic(query: string): boolean {
+  const q = query.toLowerCase().trim();
+
+  // Common off-topic triggers
+  const offTopicPatterns = [
+    /\b(weather|whether|mausam|mosam|rain|barish|barsat|temperature|degree|humidity|forecast|heatwave|cold|sunny)\b/,
+    /\b(cricket|psl|ipl|match|score|wicket|football|fifa|messi|ronaldo|babar azam|virat|hockey)\b/,
+    /\b(recipe|khana|biryani|salan|cook|cooking|cake|pizza|burger|tea|chai|coffee)\b/,
+    /\b(python|javascript|typescript|react|code|coding|programming|function|syntax|html|css|bug|compiler)\b/,
+    /\b(movie|film|cinema|song|gana|geet|actor|actress|drama|season|netflix|youtube channel)\b/,
+    /\b(joke|latifa|jokes|shayari|poetry|sher|kahani|story|astrology|horoscope|zodiac)\b/,
+    /\b(crypto|bitcoin|ethereum|forex trading|stock price|gold rate|dollar rate today)\b/,
+    /\b(who is the (prime minister|president|king|queen|founder)|capital of|population of|distance between)\b/,
+    /\b(translate (this|into|to)|how to speak|meaning of word|grammar)\b/,
+    /\b(how are you|kese ho|kia hal hai|kya haal hai|hi|hello|hey|salam|assalam|bye)\b$/
+  ];
+
+  // If matched one of the off-topic patterns AND does not contain a legal keyword
+  const matchesOffTopic = offTopicPatterns.some((pattern) => pattern.test(q));
+  if (matchesOffTopic && !hasPakistaniLegalContext(q)) {
+    return true;
+  }
+
+  return false;
+}
+
+/**
+ * Checks if the text has any legal dispute, rights, statutory or court context in Pakistan
+ */
+export function hasPakistaniLegalContext(query: string): boolean {
+  const q = query.toLowerCase();
+  const legalKeywords = [
+    "law", "qanoon", "kanoon", "legal", "court", "adalat", "wakeel", "vakil", "advocate",
+    "rights", "haq", "haqooq", "notice", "fir", "police", "thanay", "thana", "magistrate",
+    "judge", "tribunal", "section", "act", "ordinance", "constitution",
+    "deposit", "landlord", "rent", "kiraya", "makaan", "makan", "tenant", "evict", "eviction",
+    "salary", "wage", "tankhwah", "tankha", "settlement", "gratuity", "allowance", "boss", "job", "fire", "fired", "terminate", "dismiss",
+    "cyber", "peca", "fia", "blackmail", "harass", "leak", "photo", "dhamki", "threat", "scam",
+    "daraz", "consumer", "defect", "refund", "warranty", "shopping", "kharab",
+    "challan", "traffic", "warden", "license", "fine", "signal", "safe city",
+    "freelance", "contract", "agreement", "invoice", "client", "milestone", "breach",
+    "bank", "atm", "easypaisa", "jazzcash", "mohtasib", "ombudsman", "cheque", "dishonor", "489",
+    "fraud", "dhoka", "chori", "theft", "stolen", "property", "zameen", "qabza", "wirasat", "inheritance",
+    "talaq", "divorce", "khula", "maintenance", "kharcha", "bail", "zamanat", "custody", "illegal"
+  ];
+
+  return legalKeywords.some((kw) => q.includes(kw));
+}
+
+export interface QueryIntentResult {
+  isOffTopic: boolean;
+  matchedCategory?: LawCategory;
+  isGeneralLegal: boolean;
+}
+
+export function classifyQuery(query: string): QueryIntentResult {
+  const q = query.toLowerCase().trim();
+
+  // 1. Explicit off-topic check
+  if (isExplicitlyOffTopic(q)) {
+    return {
+      isOffTopic: true,
+      matchedCategory: undefined,
+      isGeneralLegal: false,
+    };
+  }
+
+  // 2. Specific law category match
+  const matched = findCategoryByQuery(q);
+  if (matched) {
+    return {
+      isOffTopic: false,
+      matchedCategory: matched,
+      isGeneralLegal: false,
+    };
+  }
+
+  // 3. Has general legal context
+  if (hasPakistaniLegalContext(q)) {
+    return {
+      isOffTopic: false,
+      matchedCategory: undefined,
+      isGeneralLegal: true,
+    };
+  }
+
+  // 4. If query doesn't match legal keywords and has 0 category match:
+  // Check if it's very short or generic query without legal intent (e.g. "Lahore", "today", "help me with phone")
+  return {
+    isOffTopic: true,
+    matchedCategory: undefined,
+    isGeneralLegal: false,
+  };
+}
+
+export function getOffTopicRefusalMessage(query: string): string {
+  return `**Yeh sawal Pakistani qanooni haqooq ke daire se bahir hai (Out of Scope Query):**
+
+Aap ka sawal *"“${query.length > 50 ? query.substring(0, 50) + "..." : query}”"* Pakistani qanoon ya shehri haqooq se mutaliq nahi hai. 
+
+**"Mera Haq" (میرا حق)** sirf aur sirf Pakistani shehriyon ko un ke **qanooni haqooq (Legal Rights)**, civil & criminal masail, aur official statutory legal notices tayyar karne ke liye banaya gaya hai. Hum mausam (weather), general chit-chat, sports ya non-legal sawalat ke jawabat nahi de sakte.
+
+---
+
+### 🛡️ Aap kin masail par Mera Haq se madad le sakte hain?
+* **🏠 Makaan Malik aur Kiraya Disputes:** Security deposit wapis na milna, bila-waja ghar khali karne ka kehna, bijli/gas katna (Punjab Rented Premises Act 2009).
+* **💼 Tankhwah aur Mulazmat:** 2-3 mah se salary na milna, bila notice job se terminate karna (Payment of Wages Act 1936).
+* **🛡️ Cybercrime aur Online Harassment:** WhatsApp par blackmailing, zaati tasaveer leak karne ki dhamki (PECA 2016 - FIA Cybercrime).
+* **🛍️ Consumer Rights & Online Fraud:** Daraz/Instagram se kharab ya nakli saman milna, refund se inkaar (Consumer Protection Act).
+* **🚦 Ghalat Traffic Challan:** Safe City e-challan ya warden ke ghalat jurmanay ko challenge karna.
+* **💻 Freelance Contract Breaches:** Client ka project lene ke baad payment rok lena (Contract Act 1872).
+* **💳 Bank aur Digital Wallets:** Easypaisa, JazzCash ya ATM se unauthorized paise katna (Banking Mohtasib).
+
+💡 *Neeche diye gaye kisi bhi scenario par click karein ya apna qanooni masla Roman Urdu ya English me likhein.*`;
+}
+
 export function findCategoryByQuery(query: string): LawCategory | undefined {
   const q = query.toLowerCase();
   if (q.includes("deposit") || q.includes("landlord") || q.includes("rent") || q.includes("kiraya") || q.includes("makaan") || q.includes("makan") || q.includes("tenant") || q.includes("evict") || q.includes("bijli") || q.includes("gas") || q.includes("owner")) {

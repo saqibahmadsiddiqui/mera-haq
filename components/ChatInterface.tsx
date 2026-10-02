@@ -22,8 +22,10 @@ import {
   AlertTriangle,
   CreditCard,
   Building,
+  Globe,
+  ExternalLink,
 } from "lucide-react";
-import { PAKISTANI_LAW_CATEGORIES, LawCategory } from "@/lib/laws-db";
+import { PAKISTANI_LAW_CATEGORIES, LawCategory, classifyQuery, getOffTopicRefusalMessage } from "@/lib/laws-db";
 import type { NoticeInitialData } from "./ComplaintLetterModal";
 
 export interface ChatMessage {
@@ -39,6 +41,8 @@ export interface ChatMessage {
   helpline?: string;
   portalUrl?: string;
   canGenerateLetter?: boolean;
+  isOffTopic?: boolean;
+  sources?: Array<{ title: string; url: string }>;
 }
 
 interface ChatInterfaceProps {
@@ -159,6 +163,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
 
       const aiMessageId = getNextMessageId("ai");
       const aiTimestamp = "Just now";
+      const isOffTopic = data.isOffTopic || data.category === "off-topic";
       const aiMsg: ChatMessage = {
         id: aiMessageId,
         sender: "ai",
@@ -171,30 +176,72 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
         authority: data.authority,
         helpline: data.helpline,
         portalUrl: data.portalUrl,
-        canGenerateLetter: data.canGenerateLetter ?? true,
+        canGenerateLetter: !isOffTopic && (data.canGenerateLetter ?? true),
+        isOffTopic: isOffTopic,
+        sources: Array.isArray(data.sources) ? data.sources : [],
       };
       setMessages((prev) => [...prev, aiMsg]);
     } catch (error) {
       console.error("Chat API error:", error);
       const fallbackId = getNextMessageId("ai-err");
       const fallbackTimestamp = "Just now";
-      const fallbackMsg: ChatMessage = {
-        id: fallbackId,
-        sender: "ai",
-        text: `**Aap ka poora qanooni haq hai:** Pakistani statutes provide direct remedies for this dispute.
+
+      const queryClassification = classifyQuery(query.trim());
+      let fallbackText = "";
+      let canGenLetter = false;
+      let catId: string | undefined = undefined;
+      let catTitle: string | undefined = undefined;
+
+      if (queryClassification.isOffTopic) {
+        fallbackText = getOffTopicRefusalMessage(query.trim());
+        catId = "off-topic";
+        catTitle = "Ghair Mutaliqa Sawal (Out of Scope)";
+        canGenLetter = false;
+      } else if (queryClassification.matchedCategory) {
+        const cat = queryClassification.matchedCategory;
+        fallbackText = `**Aap ka poora qanooni haq hai:** Pakistani qanoon aap ko is mamlay me mukammal tahaffuz faraham karta hai.
+
+### 📜 Kaunsa Qanoon Lagu Hota Hai (Applicable Pakistani Law):
+* **Qanoon (Law):** ${cat.laws.join(", ")}
+* **Mutaliqa Authority (Forum):** ${cat.authority} (${cat.authorityUrdu})
+* **Helpline / Portal:** ${cat.helpline || "District Court Facilitation"} | ${cat.portalUrl || "Local Judiciary Portal"}
+
+### 🛡️ Aap ke Bunyadi Haqooq:
+${cat.keyRights.map((r) => `* **${r}**`).join("\n")}
+
+### ⚡ 3 Zaroori Iqdamat:
+1. **Saboot Mehfooz Karein:** ${cat.actionSteps[0]}
+2. **Qanooni Notice Bhejein:** ${cat.actionSteps[1]} (${cat.standardNoticeDays} din ka notice zaroori hai).
+3. **Authority se Ruju Karein:** ${cat.actionSteps[2]}`;
+        catId = cat.id;
+        catTitle = cat.title;
+        canGenLetter = true;
+      } else {
+        fallbackText = `**Aap ka poora qanooni haq hai:** Pakistani statutes provide direct remedies for this dispute.
 
 ### 📜 Qanooni Rehnnumai:
-* **Applicable Law:** Punjab Rented Premises Act 2009 / Payment of Wages Act 1936 / PECA 2016 / Consumer Protection Act
-* **Competent Authority:** District Rent Tribunal / Labor Court / FIA Cybercrime Wing / Consumer Court
+* **Applicable Law:** Pakistan Penal Code 1860 / Civil Procedure Code 1908 / Consumer & Labor Statutes
+* **Competent Authority:** District Judiciary / Relevant Ombudsman / District Facilitation Center
 
 ### ⚡ Recommended Next Steps:
 1. **Gather Evidence:** Keep all WhatsApp receipts, agreements, and bank records.
 2. **Issue Statutory Notice:** Send a formal 7 to 14 days legal notice.
-3. **Approach Forum:** File formal petition if the party refuses to settle.
+3. **Approach Forum:** File formal petition if the party refuses to settle.`;
+        catId = "general-dispute";
+        catTitle = "General Pakistani Legal Dispute";
+        canGenLetter = true;
+      }
 
-Aap neeche diye gaye **"Generate Complaint Letter / Legal Notice"** button se ready-to-use notice tayyar kar sakte hain.`,
+      const fallbackMsg: ChatMessage = {
+        id: fallbackId,
+        sender: "ai",
+        text: fallbackText,
         timestamp: fallbackTimestamp,
-        canGenerateLetter: true,
+        category: catId,
+        categoryTitle: catTitle,
+        canGenerateLetter: canGenLetter,
+        isOffTopic: queryClassification.isOffTopic,
+        sources: [],
       };
       setMessages((prev) => [...prev, fallbackMsg]);
     } finally {
@@ -209,7 +256,10 @@ Aap neeche diye gaye **"Generate Complaint Letter / Legal Notice"** button se re
   };
 
   const handleWhatsAppShare = (msg: ChatMessage) => {
-    const textToShare = `*Mera Haq — Pakistani Legal Rights Advice:*\n\n${msg.text}\n\n_Know your rights instantly at Mera Haq._`;
+    const textToShare =
+      msg.isOffTopic || msg.category === "off-topic"
+        ? `*Mera Haq (میرا حق) — Pakistani Legal Rights & Literacy Platform:*\n\nApne qanooni haqooq (Rent, Salary, Cybercrime, Consumer rights) aur formal legal notices ke liye Mera Haq use karein.`
+        : `*Mera Haq — Pakistani Legal Rights Advice:*\n\n${msg.text}\n\n_Know your rights instantly at Mera Haq._`;
     const encoded = encodeURIComponent(textToShare);
     window.open(`https://api.whatsapp.com/send?text=${encoded}`, "_blank");
   };
@@ -333,13 +383,21 @@ Aap neeche diye gaye **"Generate Complaint Letter / Legal Notice"** button se re
                         {/* Category & Authority Badge Header if available */}
                         {msg.categoryTitle && (
                           <div className="flex flex-wrap items-center gap-2 pb-2 border-b border-slate-100">
-                            <span className="rounded-full bg-teal-50 px-2.5 py-0.5 text-xs font-bold text-teal-900 border border-teal-200">
-                              ⚖️ {msg.categoryTitle}
-                            </span>
-                            {msg.authority && (
-                              <span className="rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-medium text-slate-700">
-                                Forum: {msg.authority}
+                            {msg.isOffTopic || msg.category === "off-topic" ? (
+                              <span className="rounded-full bg-amber-50 px-2.5 py-0.5 text-xs font-bold text-amber-900 border border-amber-200">
+                                ℹ️ {msg.categoryTitle}
                               </span>
+                            ) : (
+                              <>
+                                <span className="rounded-full bg-teal-50 px-2.5 py-0.5 text-xs font-bold text-teal-900 border border-teal-200">
+                                  ⚖️ {msg.categoryTitle}
+                                </span>
+                                {msg.authority && (
+                                  <span className="rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-medium text-slate-700">
+                                    Forum: {msg.authority}
+                                  </span>
+                                )}
+                              </>
                             )}
                           </div>
                         )}
@@ -349,8 +407,79 @@ Aap neeche diye gaye **"Generate Complaint Letter / Legal Notice"** button se re
                           {msg.text}
                         </div>
 
+                        {/* Interactive Suggestion Chips for Off-Topic Queries */}
+                        {(msg.isOffTopic || msg.category === "off-topic") && (
+                          <div className="mt-3 pt-3 border-t border-slate-100 space-y-2">
+                            <div className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-slate-500">
+                              <Sparkles className="h-3.5 w-3.5 text-teal-700" />
+                              <span>Aap in Pakistani qanooni masail par foran sawal pooch sakte hain:</span>
+                            </div>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                              {EXAMPLE_CHIPS.slice(0, 4).map((chip, idx) => {
+                                const ChipIcon = chip.icon;
+                                return (
+                                  <button
+                                    key={idx}
+                                    onClick={() => handleSendMessage(chip.label, chip.category)}
+                                    className="flex items-center gap-2.5 p-2 rounded-xl bg-teal-50/70 hover:bg-teal-100/80 border border-teal-200 text-left transition group shadow-2xs"
+                                  >
+                                    <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-teal-900 text-teal-200">
+                                      <ChipIcon className="h-3 w-3" />
+                                    </div>
+                                    <div className="flex-1 overflow-hidden">
+                                      <div className="text-xs font-semibold text-teal-950 truncate">
+                                        {chip.label}
+                                      </div>
+                                      <div className="text-[10px] text-teal-800">
+                                        {chip.urdu}
+                                      </div>
+                                    </div>
+                                  </button>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Online Verified Sources & Citations if available */}
+                        {msg.sources && msg.sources.length > 0 && !msg.isOffTopic && (
+                          <div className="rounded-xl border border-teal-200/90 bg-teal-50/60 p-3 space-y-2 text-xs">
+                            <div className="flex items-center gap-1.5 font-bold text-teal-950">
+                              <Globe className="h-3.5 w-3.5 text-teal-700 shrink-0" />
+                              <span>Live Web Sources &amp; Legal Authorities ({msg.sources.length}):</span>
+                            </div>
+                            <div className="flex flex-wrap gap-1.5">
+                              {msg.sources.map((src, sIdx) => {
+                                let hostname = "";
+                                try {
+                                  hostname = new URL(src.url).hostname.replace(/^www\./, "");
+                                } catch {
+                                  hostname = src.title;
+                                }
+                                return (
+                                  <a
+                                    key={sIdx}
+                                    href={src.url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white border border-teal-200 text-[11px] font-medium text-teal-950 hover:bg-teal-100/70 hover:border-teal-400 transition shadow-2xs group"
+                                  >
+                                    <span className="truncate max-w-[200px]" title={src.title}>
+                                      {src.title}
+                                    </span>
+                                    <span className="text-[10px] text-teal-700 font-normal">
+                                      ({hostname})
+                                    </span>
+                                    <ExternalLink className="h-2.5 w-2.5 text-teal-600 group-hover:text-teal-950 shrink-0" />
+                                  </a>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        )}
+
                         {/* Official Helpline pill if available */}
-                        {msg.helpline && (
+                        {msg.helpline && !msg.isOffTopic && msg.category !== "off-topic" && (
                           <div className="rounded-xl bg-amber-50/90 border border-amber-200 p-3 flex items-center justify-between text-xs text-amber-950">
                             <div className="flex items-center gap-2">
                               <PhoneCall className="h-4 w-4 text-amber-700 shrink-0" />
@@ -374,7 +503,7 @@ Aap neeche diye gaye **"Generate Complaint Letter / Legal Notice"** button se re
                   {/* AI Action Toolbar directly under response */}
                   {!isUser && (
                     <div className="mt-3 flex flex-wrap items-center gap-2.5">
-                      {msg.canGenerateLetter && (
+                      {msg.canGenerateLetter && !msg.isOffTopic && msg.category !== "off-topic" && (
                         <button
                           id={`btn-generate-notice-${msg.id}`}
                           onClick={() =>

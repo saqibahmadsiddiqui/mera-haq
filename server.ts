@@ -8,11 +8,17 @@ const port = parseInt(process.env.PORT || '3000', 10);
 const hostname = '0.0.0.0';
 
 // Check if all required production build manifests exist; if any are missing, fallback to dev mode
-const hasBuild =
-  fs.existsSync(path.join(process.cwd(), '.next', 'routes-manifest.json')) &&
-  fs.existsSync(path.join(process.cwd(), '.next', 'build-manifest.json'));
+const requiredManifests = [
+  path.join(process.cwd(), '.next', 'BUILD_ID'),
+  path.join(process.cwd(), '.next', 'routes-manifest.json'),
+  path.join(process.cwd(), '.next', 'build-manifest.json'),
+  path.join(process.cwd(), '.next', 'prerender-manifest.json'),
+  path.join(process.cwd(), '.next', 'server', 'app-paths-manifest.json'),
+];
 
-const dev = process.env.NODE_ENV !== 'production' || !hasBuild;
+const hasBuild = requiredManifests.every((file) => fs.existsSync(file));
+
+const dev = process.env.NODE_ENV === 'development' || !hasBuild;
 
 const app = next({ dev, hostname, port });
 const handle = app.getRequestHandler();
