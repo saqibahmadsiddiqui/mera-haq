@@ -2,3 +2,19 @@
 @import "tw-animate-css";
 
 @variant dark (&:where(.dark, .dark *));
+
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  #printable-legal-notice, #printable-legal-notice * {
+    visibility: visible;
+  }
+  #printable-legal-notice {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    display: block !important;
+  }
+}

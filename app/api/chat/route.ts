@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getGeminiClient } from "@/lib/gemini";
+
+export const dynamic = "force-dynamic";
 import {
   getKnowledgeBaseSummary,
   findCategoryByQuery,

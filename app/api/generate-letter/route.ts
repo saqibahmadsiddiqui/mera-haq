@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { getGeminiClient } from "@/lib/gemini";
 import { PAKISTANI_LAW_CATEGORIES } from "@/lib/laws-db";
 
+export const dynamic = "force-dynamic";
+
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();

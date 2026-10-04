@@ -136,27 +136,8 @@ const ComplaintLetterModalContent: React.FC<ModalContentProps> = ({
   };
 
   const handlePrint = () => {
-    const printWindow = window.open("", "_blank");
-    if (!printWindow) return;
-    printWindow.document.write(`
-      <html>
-        <head>
-          <title>Legal Notice - ${complainantName}</title>
-          <style>
-            body { font-family: 'Times New Roman', serif; padding: 40px; line-height: 1.6; font-size: 14px; color: #000; }
-            pre { white-space: pre-wrap; font-family: inherit; }
-            @media print { body { padding: 0; } }
-          </style>
-        </head>
-        <body>
-          <pre>${generatedLetter}</pre>
-          <script>
-            window.onload = function() { window.print(); window.close(); }
-          </script>
-        </body>
-      </html>
-    `);
-    printWindow.document.close();
+    if (!generatedLetter) return;
+    window.print();
   };
 
   return (
@@ -552,6 +533,13 @@ const ComplaintLetterModalContent: React.FC<ModalContentProps> = ({
           )}
         </div>
       </div>
+
+      {/* Hidden container for print */}
+      {generatedLetter && (
+        <div id="printable-legal-notice" className="hidden print:block p-8 font-serif text-xs sm:text-sm text-black whitespace-pre-wrap leading-relaxed">
+          {generatedLetter}
+        </div>
+      )}
     </div>
   );
 

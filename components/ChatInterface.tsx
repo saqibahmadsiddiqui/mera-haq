@@ -26,6 +26,7 @@ import {
   ExternalLink,
 } from "lucide-react";
 import { PAKISTANI_LAW_CATEGORIES, LawCategory, classifyQuery, getOffTopicRefusalMessage } from "@/lib/laws-db";
+import { LegalMarkdownRenderer } from "./LegalMarkdownRenderer";
 import type { NoticeInitialData } from "./ComplaintLetterModal";
 
 export interface ChatMessage {
@@ -261,7 +262,11 @@ ${cat.keyRights.map((r) => `* **${r}**`).join("\n")}
         ? `*Mera Haq (میرا حق) — Pakistani Legal Rights & Literacy Platform:*\n\nApne qanooni haqooq (Rent, Salary, Cybercrime, Consumer rights) aur formal legal notices ke liye Mera Haq use karein.`
         : `*Mera Haq — Pakistani Legal Rights Advice:*\n\n${msg.text}\n\n_Know your rights instantly at Mera Haq._`;
     const encoded = encodeURIComponent(textToShare);
-    window.open(`https://api.whatsapp.com/send?text=${encoded}`, "_blank");
+    const link = document.createElement("a");
+    link.href = `https://api.whatsapp.com/send?text=${encoded}`;
+    link.target = "_blank";
+    link.rel = "noopener noreferrer";
+    link.click();
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -405,9 +410,9 @@ ${cat.keyRights.map((r) => `* **${r}**`).join("\n")}
                               </div>
                             )}
 
-                            {/* Markdown Text Body */}
-                            <div className="prose prose-sm prose-slate dark:prose-invert max-w-none space-y-2 whitespace-pre-wrap text-slate-800 dark:text-slate-100 font-sans">
-                              {msg.text}
+                            {/* Beautiful Formatted Markdown Legal Response */}
+                            <div className="pt-1">
+                              <LegalMarkdownRenderer content={msg.text} />
                             </div>
 
                             {/* Interactive Suggestion Chips for Off-Topic Queries */}
